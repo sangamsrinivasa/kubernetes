@@ -14,6 +14,7 @@ metadata:
       metadata:
         labels:
           app: web-app
+          NameSpace: dev-namespace
       spec:
         nodeSelector:
           disktype: ssd
@@ -44,13 +45,6 @@ metadata:
             volumeMounts:
             - mountPath: /usr/share/nginx/html
               name: dev-volume
-            resources:
-              requests:
-                memory: "64Mi"
-                cpu: "250m"
-              limits:
-                memory: "128Mi"
-                cpu: "500m"
             readinessProbe:
               httpGet:
                 path: /
@@ -63,24 +57,3 @@ metadata:
                 port: 80
               initialDelaySeconds: 15
               periodSeconds: 30
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
