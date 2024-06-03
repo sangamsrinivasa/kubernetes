@@ -1,0 +1,63 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dev-deployment
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: web-app
+  template:
+    metadata:
+      labels:
+        app: web-app
+        Namespace: dev-namespace
+    spec:
+      containers:
+      - name: mw-container
+        image: nginx
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: dev-volume
+          mountPath: /usr/share/nginx/html
+        securityContext:
+          runAsUser: 1000
+          capabilities:
+            add:
+              - NET_ADMIN
+      volumes:
+      - name: dev-volume
+        emptyDir: {}
+      livenessProbe:
+        httpGet:
+        path: /
+        port: 80
+        initialDelaySeconds: 15
+        periodSeconds: 10
+      readinessProbe:
+        httpGet:
+        path: /
+        port: 80
+        initialDelaySeconds: 5
+        periodSeconds: 5
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - mw-app
+            topologyKey: "kubernetes.io/hostname"
+      priorityClassName: high-priority
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  minReadySeconds: 10
+  revisionHistoryLimit: 5
+
