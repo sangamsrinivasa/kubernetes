@@ -4,4 +4,4 @@ Apply configuration in order
 2. kubectl apply -f limitrange.yml
 3. kubectl apply -f deployment.yml
 4. kubectl apply -f service.yml
-
+5. kubectl apply -f hpa.yml

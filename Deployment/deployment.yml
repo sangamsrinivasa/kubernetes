@@ -30,6 +30,29 @@ spec:
       volumes:
       - name: dev-volume
         emptyDir: {}
+      livenessProbe:
+        httpGet:
+        path: /
+        port: 80
+        initialDelaySeconds: 15
+        periodSeconds: 10
+      readinessProbe:
+        httpGet:
+        path: /
+        port: 80
+        initialDelaySeconds: 5
+        periodSeconds: 5
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - mw-app
+            topologyKey: "kubernetes.io/hostname"
+      priorityClassName: high-priority
   strategy:
     type: RollingUpdate
     rollingUpdate:
